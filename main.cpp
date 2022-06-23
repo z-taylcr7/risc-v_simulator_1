@@ -37,7 +37,7 @@ int main() {
      //   showReg();
     }
     std::cout<<(((unsigned int)reg[10])&255u);
-    return ((unsigned int)reg[10])&255u;
+    return 0;
 }
 
 
