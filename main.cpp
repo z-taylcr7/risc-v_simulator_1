@@ -11,22 +11,19 @@ std::string orders[37]={"add", "sub", "sll"," slt", "sltu"," Xor", "srl"," sra",
                         "sb", "sh", "sw"//S
 };
 uint reg[32];
-uint mem[200002];
+uint mem[500005];
 code ins[5];
 
 
 void showReg(){
-   std::cout<<orders[ins[0].command]<<" has just completed "<<std::endl;
-    std::cout<<"SHOW REGISTER HERE: PC at "<<decToHex(PC)<<std::endl;
-    for(int i=0;i<32;i++){
-        std::cout<<"reg["<<i<<']'<<" = "<<reg[i]<<"   ";
-        if(i%4==0)std::cout<<std::endl;
-    }
-    std::cout<<std::endl;
+   //std::cout<<orders[ins[0].command]<<" has just completed "<<std::endl;
+
+   for(int i=0;i<32;i++){std::cout<<"reg["<<i<<']'<<" = "<<reg[i]<<"   ";if(i%8==7)std::cout<<std::endl;}
+   std::cout<<decToHex(PC)<<std::endl;
 }
 
 int main() {
-   // freopen("az.ans","w",stdout);
+   //freopen("az.ans","w",stdout);
     read();PC=0;
     while(true){
         if(ins[0].fetchCode()!=0)break;
@@ -35,7 +32,7 @@ int main() {
         ins[0].writeMemory();
         ins[0].writeRegister();
         reg[0]=0;
-    //    showReg();
+        //showReg();
     }
     std::cout<<(((unsigned int)reg[10])&255u)<<std::endl;
     return 0;

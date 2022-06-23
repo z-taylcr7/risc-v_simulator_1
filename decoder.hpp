@@ -5,8 +5,8 @@
 #ifndef RISC_V_SIMULATOR_DECODER_HPP
 #define RISC_V_SIMULATOR_DECODER_HPP
 extern uint reg[32];
-extern uint mem[200002];
-std::string instruction[2000002];
+extern uint mem[500005];
+std::string instruction[22000002];
 unsigned int PC = 0;
 unsigned int last=0;
 namespace Cristiano {
@@ -50,15 +50,21 @@ namespace Cristiano {
         std::string str=ch;
         return str;
     }
-
+    uint readMemory(int pc){
+        uint x=0;
+        for(int i=0;i<4;i++){
+            x|=mem[pc+i]<<(i<<3);
+        }
+        return x;
+    }
     class code {
     private:
         std::string order;
 
     public:
         int height=0;
-        int memo=0;int data=0;
-        int regi=0;int tmp=0;int pos=0;
+        int memo=0;uint data=0;
+        int regi=0;uint tmp=0;int pos=0;
         unsigned int rs1, rs2;
         unsigned int rd;
         int imm;int shamt;
@@ -100,12 +106,14 @@ namespace Cristiano {
             imm = btoi(order[0]+  order.substr(12, 8)+ order[11] + order.substr(1, 10)+ '0' );
             command = jal;
             height=20;
+            if(imm>=1<<20)imm-=1<<21;
         }
 
         void Idecode() {
             rd = btoi(order.substr(20, 5));
             rs1 = btoi(order.substr(12, 5));
             imm = btoi(order.substr(0, 12));
+            if(imm>=2048)imm-=4096;
             height=11;
             if (order.substr(25, 7) == "1100111") {
                 command = jalr;
@@ -144,6 +152,7 @@ namespace Cristiano {
             rs2 = btoi(order.substr(7, 5));
             std::string str=order[24]+order.substr(1, 6)+order.substr(20, 4)  +'0';
             imm = btoi(order[0]+str);
+            if(imm>=4096)imm-=8192;
             height=12;
             std::string fun(order.substr(17, 3));
             if (fun == "000")command = beq;
@@ -158,6 +167,7 @@ namespace Cristiano {
             rs1 = btoi(order.substr(12, 5));
             rs2 = btoi(order.substr(7, 5));
             imm = btoi( (order.substr(0, 7))+ order.substr(20, 5));
+            if(imm>=2048)imm-=4096;
             height=11;
             std::string fun(order.substr(17, 3));
             if (fun == "000")command = sb;
@@ -169,7 +179,7 @@ namespace Cristiano {
             if (order[26] == '0')command = auipc;
             else command = lui;
             rd = btoi(order.substr(20, 5));
-            imm = btoi( order.substr(0, 20));//12x0
+            imm = btoi( order.substr(0, 20));if(imm>=1<<19)imm-=1<<20;//12x0
             height=31;
         }
 
@@ -313,27 +323,27 @@ namespace Cristiano {
 
         }
         void LB(){
-            int x=mem[reg[rs1]+sext(imm, height)];
+            int x= readMemory(reg[rs1]+sext(imm, height));
             data=sext(x-((x>>8)<<8),7);
             regi=1;PC+=4;
         }
         void LBU(){
-            int x=mem[reg[rs1]+sext(imm, height)];
+            int x=readMemory(reg[rs1]+sext(imm, height));
             data=x-((x>>8)<<8);
             regi=1;PC+=4;
         }
         void LH(){
-            int x=mem[reg[rs1]+sext(imm, height)];
+            int x=readMemory(reg[rs1]+sext(imm, height));
             data=sext(x-((x>>16)<<16),15);
             regi=1;PC+=4;
         }
         void LHU(){
-            int x=mem[reg[rs1]+sext(imm, height)];
+            int x=readMemory(reg[rs1]+sext(imm, height));
             data=x-((x>>16)<<16);
             regi=1;PC+=4;
         }
         void LW(){
-            int x=mem[reg[rs1]+sext(imm, height)];
+            int x=readMemory(reg[rs1]+sext(imm, height));
             data=x;
             regi=1;PC+=4;
         }
@@ -381,12 +391,12 @@ namespace Cristiano {
             regi=1;PC+=4;
         }
         void SRA(){
-            int a1=reg[rs1],a2=reg[rs2];
+            uint a1=reg[rs1],a2=reg[rs2];
             data=a1>>a2;
             regi=1;PC+=4;
         }
         void SRAI(){
-            data=fix(reg[rs1]>>(shamt),4);
+            data=reg[rs1]>>(shamt);
             regi=1;PC+=4;
         }
         void SRL(){
@@ -463,7 +473,11 @@ namespace Cristiano {
         }
         void writeMemory(){
            if(memo==1){
-               mem[pos]=tmp;tmp=pos=0;memo=0;
+               for(int i=0;i<4;i++){
+                   mem[pos]=tmp&0xff;
+                   tmp>>=8;pos++;
+               }
+               tmp=pos=0;memo=0;
            }
         }
         void writeRegister(){
@@ -474,19 +488,20 @@ namespace Cristiano {
 
 
     };
+    
 
     void read() {
-        std::string str;
+        std::string str,strmem;
         std::cin>>str;
-        int cnt=0;
+        int cnt=0,k=0;
         while(str=="end"||!std::cin.eof()){
             if(str[0]=='@'){
                 str=str.substr(1);cnt=xtoi(str);
             }
             else{
-                mem[cnt]=hexStringToDec(str);
+                int num=(hexStringToDec(str));
+                mem[cnt]|=num;
                 instruction[cnt]=str;cnt++;
-
             }
             std::cin>>str;
             if(std::cin.eof())break;

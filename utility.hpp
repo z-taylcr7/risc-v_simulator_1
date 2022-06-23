@@ -29,13 +29,11 @@ namespace Cristiano{
         }
         return ans;
     }
-    int sext(int x,int h) {
-        if ((x >> h) & 1) {
-            for (int j = h + 1; j < 32; j++) {
-                x += 1 << j;
-            }
-        }
-        return  x;
+
+    inline unsigned int sext(const unsigned int &x, const int &r){
+        bool c=((unsigned)1<<r)&x;
+        if(!c)return x;
+        return x|((-1)<<(r+1));
     }
     int fix(int x,int h){
         if ((x >> h) & 1) {
@@ -55,8 +53,8 @@ namespace Cristiano{
         }
         return reverse(str);
     }
-    unsigned int hexStringToDec(std::string str){
-        uint ret = 0;
+     int hexStringToDec(std::string str){
+        int ret = 0;
         for (int i = 0; i < str.length(); ++i) ret = (ret << 4) + ((str[i]>='A'&&str[i]<='F') ? (str[i] - 'A' + 10) : (str[i] - '0'));
         return ret;
     }
