@@ -487,6 +487,7 @@ namespace Cristiano {
                 instruction[cnt++]=str;
             }
             std::cin>>str;
+            if(std::cin.eof())break;
             if(str=="end"){
                 last=cnt;break;
             }
