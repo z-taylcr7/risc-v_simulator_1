@@ -25,7 +25,7 @@ void showReg(){
 }
 
 int main() {
-    freopen("az.ans","w",stdout);
+   // freopen("az.ans","w",stdout);
     read();PC=0;
     while(true){
         if(ins[0].fetchCode()!=0)break;
@@ -34,7 +34,7 @@ int main() {
         ins[0].writeMemory();
         ins[0].writeRegister();
         reg[0]=0;
-        showReg();
+     //   showReg();
     }
     std::cout<<(((unsigned int)reg[10])&255u);
     return ((unsigned int)reg[10])&255u;
