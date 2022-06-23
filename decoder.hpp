@@ -504,8 +504,9 @@ namespace Cristiano {
                 mem[cnt]|=num;
                 instruction[cnt]=str;cnt++;
             }
-            std::cin>>str;
-            if(std::cin.eof())break;
+            if(!(std::cin>>str)){
+                last=cnt;break;
+            }
             if(str=="end"){
                 last=cnt;break;
             }
