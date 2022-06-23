@@ -1,12 +1,13 @@
 //
 // Created by Cristiano on 2022/6/21.
 //
+#include <map>
 #include "utility.hpp"
 #ifndef RISC_V_SIMULATOR_DECODER_HPP
 #define RISC_V_SIMULATOR_DECODER_HPP
 extern uint reg[32];
 extern uint mem[500005];
-std::string instruction[22000002];
+std::map<int,std::string> instruction;
 unsigned int PC = 0;
 unsigned int last=0;
 namespace Cristiano {
