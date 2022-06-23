@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "decoder.hpp"
 using namespace Cristiano;
+using uint= unsigned int;
 std::string orders[37]={"add", "sub", "sll"," slt", "sltu"," Xor", "srl"," sra", "Or", "And",//R
                         "lui", "auipc",//U
                         "jal", "beq", "bne","blt", "bge", "bltu"," bgeu",//B
@@ -9,8 +10,8 @@ std::string orders[37]={"add", "sub", "sll"," slt", "sltu"," Xor", "srl"," sra",
                         "jalr",//J
                         "sb", "sh", "sw"//S
 };
- int reg[32];
-int mem[200002];
+uint reg[32];
+uint mem[200002];
 code ins[5];
 
 
@@ -34,7 +35,7 @@ int main() {
         ins[0].writeMemory();
         ins[0].writeRegister();
         reg[0]=0;
-     //   showReg();
+    //    showReg();
     }
     std::cout<<(((unsigned int)reg[10])&255u)<<std::endl;
     return 0;

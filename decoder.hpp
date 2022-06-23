@@ -4,8 +4,8 @@
 #include "utility.hpp"
 #ifndef RISC_V_SIMULATOR_DECODER_HPP
 #define RISC_V_SIMULATOR_DECODER_HPP
-extern int reg[32];
-extern int mem[200002];
+extern uint reg[32];
+extern uint mem[200002];
 std::string instruction[2000002];
 unsigned int PC = 0;
 unsigned int last=0;
@@ -185,9 +185,9 @@ namespace Cristiano {
 
         void SUB() {
             //           bool sign=(reg[rs1]>=reg[rs2]);
-            unsigned int cur1 = reg[rs1];
-            unsigned int cur2(-reg[rs2]);
-            int cur(cur1 + cur2);
+            int cur1 = reg[rs1];
+            int cur2 = reg[rs2];
+            int cur(cur1 - cur2);
             data = cur;
             regi=1;PC+=4;
 
@@ -195,8 +195,8 @@ namespace Cristiano {
         }
 
         void XOR() {
-            unsigned int cur1(reg[rs1]);
-            unsigned int cur2(reg[rs2]);
+             int cur1(reg[rs1]);
+             int cur2(reg[rs2]);
             int cur(cur1 ^ cur2);
             data = cur;
             regi=1;PC+=4;
@@ -204,8 +204,8 @@ namespace Cristiano {
         }
 
         void AND() {
-            unsigned int cur1(reg[rs1]);
-            unsigned int cur2(reg[rs2]);
+             int cur1(reg[rs1]);
+             int cur2(reg[rs2]);
             int cur(cur1 & cur2);
             data = cur;
             regi=1;PC+=4;
@@ -439,7 +439,7 @@ namespace Cristiano {
             if (command == sltiu)SLTIU();
         }
        int fetchCode() {//end return false
-            if(PC>=last)return -1;
+            if(PC>last)return -1;
             char i1, i2;
             std::string line = "";
             for (int i = PC; i < PC+4; i++) {
@@ -484,7 +484,9 @@ namespace Cristiano {
                 str=str.substr(1);cnt=xtoi(str);
             }
             else{
-                instruction[cnt++]=str;
+                mem[cnt]=hexStringToDec(str);
+                instruction[cnt]=str;cnt++;
+
             }
             std::cin>>str;
             if(std::cin.eof())break;

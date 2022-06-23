@@ -53,10 +53,12 @@ namespace Cristiano{
             else ch ='0'+a;
             str+=ch;
         }
-
         return reverse(str);
-
-
+    }
+    unsigned int hexStringToDec(std::string str){
+        uint ret = 0;
+        for (int i = 0; i < str.length(); ++i) ret = (ret << 4) + ((str[i]>='A'&&str[i]<='F') ? (str[i] - 'A' + 10) : (str[i] - '0'));
+        return ret;
     }
 //    int*& toIntArray(const std::string str){
 //        int l=str.length();int* ans=new int[32];
