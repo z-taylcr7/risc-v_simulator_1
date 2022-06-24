@@ -1,13 +1,11 @@
 //
 // Created by Cristiano on 2022/6/21.
 //
-#include <map>
 #include "utility.hpp"
 #ifndef RISC_V_SIMULATOR_DECODER_HPP
 #define RISC_V_SIMULATOR_DECODER_HPP
 extern uint reg[32];
 extern uint mem[500005];
-std::map<int,std::string> instruction;
 unsigned int PC = 0;
 unsigned int last=0;
 namespace Cristiano {
@@ -61,7 +59,6 @@ namespace Cristiano {
     class code {
     private:
         std::string order;
-
     public:
         int height=0;
         int memo=0;uint data=0;
@@ -451,14 +448,7 @@ namespace Cristiano {
         }
        int fetchCode() {//end return false
             if(PC>last)return -1;
-            char i1, i2;
-            std::string line = "";
-            for (int i = PC; i < PC+4; i++) {
-                i1 = instruction[i][0];
-                i2 = instruction[i][1];
-                line.append(reverse(to8(i1, i2)).c_str());
-            }
-            order= reverse(line);
+            order= decToBin(readMemory(PC));
             if(order=="00001111111100000000010100010011")return 1;
             return 0;
         }
@@ -497,12 +487,11 @@ namespace Cristiano {
         int cnt=0,k=0;
         while(str=="end"||!std::cin.eof()){
             if(str[0]=='@'){
-                str=str.substr(1);cnt=xtoi(str);
+                str=str.substr(1);cnt=hexStringToDec(str);
             }
             else{
                 int num=(hexStringToDec(str));
-                mem[cnt]|=num;
-                instruction[cnt]=str;cnt++;
+                mem[cnt]|=num;cnt++;
             }
             if(!(std::cin>>str)){
                 last=cnt;break;

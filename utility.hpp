@@ -43,10 +43,10 @@ namespace Cristiano{
         }
         return x;
     }
-    std::string decToBin(int u){
+    std::string decToBin(unsigned int u){
         std::string str;
         while(u>0){
-            int a=u%2;u=u/2;char ch='0';
+            int a=u&1;u=u>>1;char ch='0';
             if(a)ch='0'+a;
             str=ch+str;
         }
@@ -63,6 +63,9 @@ namespace Cristiano{
             str=ch+str;
         }
         return reverse(str);
+    }
+    inline unsigned int ask(const unsigned int &x,const int &l,const int &r){
+        return (x&( ((-1)>>(31-r+l))<<l ))>>l;
     }
      int hexStringToDec(std::string str){
         int ret = 0;
